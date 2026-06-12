@@ -7,11 +7,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication
+        .UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority
+        .AuthorityUtils;
+import org.springframework.security.core.context
+        .SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.filter
+        .OncePerRequestFilter;
 
 @Component
 public class JwtAuthenticationFilter
@@ -33,7 +37,9 @@ public class JwtAuthenticationFilter
             throws ServletException, IOException {
 
         String header =
-                request.getHeader("Authorization");
+                request.getHeader(
+                        "Authorization"
+                );
 
         if (header != null &&
                 header.startsWith("Bearer ")) {
@@ -44,23 +50,34 @@ public class JwtAuthenticationFilter
             if (jwtUtil.validateToken(token)) {
 
                 String email =
-        jwtUtil.extractEmail(token);
+                        jwtUtil.extractEmail(
+                                token
+                        );
 
-String role =
-        jwtUtil.extractRole(token);
+                String role =
+                        jwtUtil.extractRole(
+                                token
+                        );
 
-UsernamePasswordAuthenticationToken auth =
-        new UsernamePasswordAuthenticationToken(
-                email,
-                null,
-                AuthorityUtils.createAuthorityList(
-                        "ROLE_" + role));
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(
+                                email,
+                                null,
+                                AuthorityUtils
+                                        .createAuthorityList(
+                                                "ROLE_" + role
+                                        )
+                        );
+
                 SecurityContextHolder
                         .getContext()
                         .setAuthentication(auth);
             }
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(
+                request,
+                response
+        );
     }
 }

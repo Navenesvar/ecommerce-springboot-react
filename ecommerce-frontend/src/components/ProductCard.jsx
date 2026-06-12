@@ -1,23 +1,23 @@
 import api from "../services/api";
-import { Link, useNavigate } from "react-router-dom";import { getRoleFromToken } from "../utils/jwt";
+import { Link, useNavigate } from "react-router-dom";
+import { getRoleFromToken } from "../utils/jwt";
+
 function ProductCard({ product, onDelete }) {
 
     const navigate = useNavigate();
 
     const token = localStorage.getItem("token");
     const role = getRoleFromToken();
+
     console.log("ROLE =", role);
 
     const addToCart = async () => {
 
-        const token =
-            localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
         if (!token) {
 
-            alert(
-                "Please login first"
-            );
+            alert("Please login first");
 
             navigate("/login");
 
@@ -29,30 +29,23 @@ function ProductCard({ product, onDelete }) {
             await api.post(
                 "/cart",
                 {
-                    productId:
-                        product.id,
-
+                    productId: product.id,
                     quantity: 1
                 },
                 {
                     headers: {
-                        Authorization:
-                            `Bearer ${token}`
+                        Authorization: `Bearer ${token}`
                     }
                 }
             );
 
-            alert(
-                "Added To Cart"
-            );
+            alert("Added To Cart");
 
         } catch (error) {
 
             console.log(error);
 
-            alert(
-                "Failed To Add Product"
-            );
+            alert("Failed To Add Product");
         }
     };
 
@@ -70,10 +63,7 @@ function ProductCard({ product, onDelete }) {
 
     return (
 
-        <div
-            className=
-            "card border-0 shadow-lg h-100"
-        >
+        <div className="card border-0 shadow-lg h-100">
 
             <img
                 src={
@@ -91,21 +81,15 @@ function ProductCard({ product, onDelete }) {
             <div className="card-body">
 
                 <h4 className="fw-bold">
-
                     {product.name}
-
                 </h4>
 
                 <p className="text-muted">
-
                     {product.description}
-
                 </p>
 
                 <h3 className="text-success">
-
                     ₹{product.price}
-
                 </h3>
 
             </div>
@@ -113,34 +97,32 @@ function ProductCard({ product, onDelete }) {
             <div className="card-footer bg-white border-0">
 
                 <button
-                    className=
-                    "btn btn-primary w-100"
+                    className="btn btn-primary w-100"
                     onClick={addToCart}
                 >
-
                     Add To Cart
-
                 </button>
 
                 {role === "ADMIN" && (
-    <>
-        <Link
-            to={`/admin/edit-product/${product.id}`}
-            className="btn btn-warning w-100 mt-2"
-        >
-            Edit Product
-        </Link>
+                    <>
+                        <Link
+                            to={`/admin/edit-product/${product.id}`}
+                            className="btn btn-warning w-100 mt-2"
+                        >
+                            Edit Product
+                        </Link>
 
-        {onDelete && (
-            <button
-                className="btn btn-danger w-100 mt-2"
-                onClick={handleDelete}
-            >
-                Delete Product
-            </button>
-        )}
-    </>
-)}
+                        {onDelete && (
+                            <button
+                                className="btn btn-danger w-100 mt-2"
+                                onClick={handleDelete}
+                            >
+                                Delete Product
+                            </button>
+                        )}
+                    </>
+                )}
+
             </div>
 
         </div>

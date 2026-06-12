@@ -59,6 +59,7 @@ function App() {
           path="/admin/edit-product/:id"
           element={<AdminEditProduct />}
         />
+        
       </Routes>
 
     </BrowserRouter>

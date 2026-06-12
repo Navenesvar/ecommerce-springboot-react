@@ -3,16 +3,15 @@ package com.project.ecommerce.config;
 import com.project.ecommerce.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
@@ -34,18 +33,19 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
-        CorsConfiguration configuration =
-                new CorsConfiguration();
+        CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(
-                List.of("http://localhost:5173"));
+                List.of("http://localhost:5173")
+        );
 
         configuration.setAllowedMethods(
-                List.of("GET", "POST", "PUT",
-                        "DELETE", "OPTIONS"));
+                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        );
 
         configuration.setAllowedHeaders(
-                List.of("*"));
+                List.of("*")
+        );
 
         configuration.setAllowCredentials(true);
 
@@ -54,14 +54,16 @@ public class SecurityConfig {
 
         source.registerCorsConfiguration(
                 "/**",
-                configuration);
+                configuration
+        );
 
         return source;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http) throws Exception {
+            HttpSecurity http
+    ) throws Exception {
 
         http
             .cors(cors -> {})
@@ -69,32 +71,39 @@ public class SecurityConfig {
 
             .sessionManagement(session ->
                 session.sessionCreationPolicy(
-                    SessionCreationPolicy.STATELESS))
+                    SessionCreationPolicy.STATELESS
+                )
+            )
 
             .authorizeHttpRequests(auth -> auth
 
-    .requestMatchers(
-        "/api/users/register",
-        "/api/users/login"
-    ).permitAll()
+                // Public endpoints
+                .requestMatchers(
+                    "/api/users/register",
+                    "/api/users/login"
+                ).permitAll()
 
-    .requestMatchers(
-        org.springframework.http.HttpMethod.GET,
-        "/api/products/**"
-    ).permitAll()
+                // Anyone can view products
+                .requestMatchers(
+                    org.springframework.http.HttpMethod.GET,
+                    "/api/products/**"
+                ).permitAll()
 
-    .requestMatchers(
-        org.springframework.http.HttpMethod.POST,
-        "/api/products"
-    ).hasRole("ADMIN")
+                // Admin-only product creation
+                .requestMatchers(
+                    org.springframework.http.HttpMethod.POST,
+                    "/api/products"
+                ).hasRole("ADMIN")
 
-    .requestMatchers(
-        org.springframework.http.HttpMethod.DELETE,
-        "/api/products/**"
-    ).hasRole("ADMIN")
+                // Admin-only product deletion
+                .requestMatchers(
+                    org.springframework.http.HttpMethod.DELETE,
+                    "/api/products/**"
+                ).hasRole("ADMIN")
 
-    .anyRequest().authenticated()
-)
+                // All other endpoints require authentication
+                .anyRequest().authenticated()
+            )
 
             .addFilterBefore(
                 jwtFilter,
